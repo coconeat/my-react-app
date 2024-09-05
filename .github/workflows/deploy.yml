@@ -19,7 +19,7 @@ jobs:
           node-version: '20'
 
       # Ensure OpenSSL legacy provider is used for Node.js 20
-      - name: Build project
+      - name: Install dependencies and build project
         env:
           NODE_OPTIONS: --openssl-legacy-provider
         run: |
