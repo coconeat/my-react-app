@@ -1,8 +1,8 @@
 require('dotenv').config();
-
 const { S3Client, ListObjectsV2Command, DeleteObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 const path = require('path');
+const mime = require('mime-types'); // To determine the correct MIME type
 
 // Configure AWS with your access and secret key from environment variables.
 const s3 = new S3Client({
@@ -22,16 +22,18 @@ const buildDirectory = path.join(__dirname, 'build');
 // Function: Upload file to S3
 const uploadFile = async (filePath, s3Bucket, s3Key) => {
   const fileContent = fs.readFileSync(filePath);
-  
+  const contentType = mime.lookup(filePath) || 'application/octet-stream'; // Determine the correct MIME type
+
   const uploadParams = {
     Bucket: s3Bucket,
     Key: s3Key,
-    Body: fileContent
+    Body: fileContent,
+    ContentType: contentType // Set the Content-Type header
   };
 
   try {
     await s3.send(new PutObjectCommand(uploadParams));
-    console.log(`Uploaded ${s3Key} from path ${filePath}`);
+    console.log(`Uploaded ${s3Key} from path ${filePath} with Content-Type ${contentType}`);
   } catch (err) {
     console.error(`Error uploading ${s3Key}: `, err);
   }
