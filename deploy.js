@@ -28,7 +28,8 @@ const uploadFile = async (filePath, s3Bucket, s3Key) => {
     Bucket: s3Bucket,
     Key: s3Key,
     Body: fileContent,
-    ContentType: contentType // Set the Content-Type header
+    ContentType: contentType, // Set the Content-Type header
+    CacheControl: 'public, max-age=31536000' // Optional: Set Cache-Control header
   };
 
   try {
