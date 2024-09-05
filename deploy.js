@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 const path = require('path');
@@ -24,13 +26,12 @@ const uploadFile = async (filePath, s3Bucket, s3Key) => {
   const uploadParams = {
     Bucket: s3Bucket,
     Key: s3Key,
-    Body: fileContent,
-    ACL: 'public-read'
+    Body: fileContent
   };
 
   try {
     await s3.send(new PutObjectCommand(uploadParams));
-    console.log(`Uploaded ${s3Key}`);
+    console.log(`Uploaded ${s3Key} from path ${filePath}`);
   } catch (err) {
     console.error(`Error uploading ${s3Key}: `, err);
   }
@@ -56,3 +57,4 @@ const uploadDirectory = async (srcDir, s3Bucket, srcDirPrefix = '') => {
 uploadDirectory(buildDirectory, bucketName)
   .then(() => console.log('Upload complete!'))
   .catch((err) => console.error('Error uploading files:', err));
+  

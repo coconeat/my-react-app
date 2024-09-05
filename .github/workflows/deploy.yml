@@ -26,6 +26,10 @@ jobs:
           npm install
           npm run build
 
+      # List build directory contents
+      - name: List build directory contents
+        run: ls -la build/
+
       # Run the deployment script
       - name: Deploy to S3
         env:
