@@ -33,5 +33,4 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
-          npm install -g aws-cli
           aws s3 sync build/ s3://$AWS_S3_BUCKET --region $AWS_REGION --acl public-read
