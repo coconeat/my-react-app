@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, ListObjectsV2Command, DeleteObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 const path = require('path');
 
@@ -47,14 +47,79 @@ const uploadDirectory = async (srcDir, s3Bucket, srcDirPrefix = '') => {
     if (stats.isDirectory()) {
       await uploadDirectory(fullPath, s3Bucket, path.join(srcDirPrefix, file));
     } else {
-      const s3Key = path.join(srcDirPrefix, file);
+      const s3Key = path.join(srcDirPrefix, file).replace(/\\/g, '/'); // Ensure correct path separators for S3
       await uploadFile(fullPath, s3Bucket, s3Key);
     }
   }));
 };
 
-// Start upload
-uploadDirectory(buildDirectory, bucketName)
-  .then(() => console.log('Upload complete!'))
-  .catch((err) => console.error('Error uploading files:', err));
-  
+// Function: List objects in S3 bucket
+const listS3Objects = async (s3Bucket) => {
+  const listParams = {
+    Bucket: s3Bucket
+  };
+  try {
+    const data = await s3.send(new ListObjectsV2Command(listParams));
+    return data.Contents || [];
+  } catch (err) {
+    console.error('Error listing S3 objects:', err);
+    return [];
+  }
+};
+
+// Function: Delete object in S3 bucket
+const deleteS3Object = async (s3Bucket, s3Key) => {
+  const deleteParams = {
+    Bucket: s3Bucket,
+    Key: s3Key
+  };
+  try {
+    await s3.send(new DeleteObjectCommand(deleteParams));
+    console.log(`Deleted ${s3Key} from S3`);
+  } catch (err) {
+    console.error(`Error deleting ${s3Key}:`, err);
+  }
+};
+
+// Function: Clear S3 bucket
+const clearS3Bucket = async (s3Bucket, buildFiles) => {
+  const currentS3Files = await listS3Objects(s3Bucket);
+  const buildFilesSet = new Set(buildFiles.map(file => file.replace(/\\/g, '/')));
+
+  await Promise.all(currentS3Files.map(async (file) => {
+    if (!buildFilesSet.has(file.Key)) {
+      await deleteS3Object(s3Bucket, file.Key);
+    }
+  }));
+};
+
+// Function: Get list of all files in the build directory
+const getBuildFiles = (srcDir) => {
+  const files = [];
+  const readDirectory = (dir) => {
+    const items = fs.readdirSync(dir);
+    items.forEach(item => {
+      const fullPath = path.join(dir, item);
+      const stats = fs.statSync(fullPath);
+      if (stats.isDirectory()) {
+        readDirectory(fullPath);
+      } else {
+        files.push(fullPath.replace(`${buildDirectory}${path.sep}`, ''));
+      }
+    });
+  };
+  readDirectory(srcDir);
+  return files;
+};
+
+// Start upload process
+(async () => {
+  try {
+    const buildFiles = getBuildFiles(buildDirectory);
+    await clearS3Bucket(bucketName, buildFiles);
+    await uploadDirectory(buildDirectory, bucketName);
+    console.log('Upload complete!');
+  } catch (err) {
+    console.error('Error during upload process:', err);
+  }
+})();
