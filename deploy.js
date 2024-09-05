@@ -39,6 +39,7 @@ const uploadFile = async (filePath, s3Bucket, s3Key) => {
 // Function: Upload directory to S3
 const uploadDirectory = async (srcDir, s3Bucket, srcDirPrefix = '') => {
   const files = fs.readdirSync(srcDir);
+  console.log(`Uploading files in ${srcDir}:`, files);
   await Promise.all(files.map(async (file) => {
     const fullPath = path.join(srcDir, file);
     const stats = fs.statSync(fullPath);
