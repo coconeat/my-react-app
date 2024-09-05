@@ -2,7 +2,7 @@
   "name": "my-react-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://my-react-app-bucket-coconeat.s3-website-us-east-2.amazonaws.com",
+  "homepage": "http://my-react-app-bucket-coconeat.s3-website.us-east-2.amazonaws.com",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.645.0",
     "@testing-library/jest-dom": "^5.17.0",
