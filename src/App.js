@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { handleSubmit } from './handleFormSubmission'; // Correct the import path
 
 function App() {
   const [name, setName] = useState('');
@@ -24,32 +25,35 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          我叼你妈的
+          Create a New User in Odoo
         </p>
-        <div>
-          <input
-            type="text"
-            value={name}
-            onChange={handleNameChange}
-            placeholder="Enter your name..."
-          />
-        </div>
-        <div>
-          <input
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="Enter your email..."
-          />
-        </div>
-        <div>
-          <input
-            type="tel"
-            value={phone}
-            onChange={handlePhoneChange}
-            placeholder="Enter your phone..."
-          />
-        </div>
+        <form onSubmit={(event) => handleSubmit(event, name, email, phone)}> {/* Set up form submission */}
+          <div>
+            <input
+              type="text"
+              value={name}
+              onChange={handleNameChange}
+              placeholder="Enter your name..."
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Enter your email..."
+            />
+          </div>
+          <div>
+            <input
+              type="tel"
+              value={phone}
+              onChange={handlePhoneChange}
+              placeholder="Enter your phone..."
+            />
+          </div>
+          <button type="submit">Submit</button> {/* Submit button */}
+        </form>
       </header>
     </div>
   );
