@@ -1,8 +1,5 @@
 import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-import config from './cognitoConfig'; // Correct import
-
-// Log configuration to verify values
-console.log('Auth Config:', config);
+import config from './cognitoConfig';
 
 const userPool = new CognitoUserPool({
   UserPoolId: config.UserPoolId,

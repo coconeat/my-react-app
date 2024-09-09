@@ -4,6 +4,4 @@ const config = {
   region: process.env.REACT_APP_REGION
 };
 
-console.log('Cognito Config:', config); // For debugging
-
 export default config;
