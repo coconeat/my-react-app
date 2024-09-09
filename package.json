@@ -8,18 +8,20 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "aws-sdk": "^2.1690.0",
+    "amazon-cognito-identity-js": "^6.3.12",
+    "aws-sdk": "^2.1691.0",
     "dotenv": "^16.4.5",
     "mime-types": "^2.1.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
     "react-scripts": "^3.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "test": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -41,6 +43,8 @@
     ]
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv-webpack": "^8.1.0",
     "nodemon": "^3.1.4"
   }
 }

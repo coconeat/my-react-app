@@ -1,62 +1,27 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { handleSubmit } from './handleFormSubmission'; // Correct the import path
+import { Route, Routes, Navigate, BrowserRouter as Router } from 'react-router-dom';
+import Home from './Home';
+import SignIn from './SignIn';
+import SignUp from './SignUp';
 
-function App() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
 
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const handlePhoneChange = (event) => {
-    setPhone(event.target.value);
+  const handleSignOut = () => {
+    setIsAuthenticated(false);
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Create a New User in Odoo
-        </p>
-        <form onSubmit={(event) => handleSubmit(event, name, email, phone)}> {/* Set up form submission */}
-          <div>
-            <input
-              type="text"
-              value={name}
-              onChange={handleNameChange}
-              placeholder="Enter your name..."
-            />
-          </div>
-          <div>
-            <input
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="Enter your email..."
-            />
-          </div>
-          <div>
-            <input
-              type="tel"
-              value={phone}
-              onChange={handlePhoneChange}
-              placeholder="Enter your phone..."
-            />
-          </div>
-          <button type="submit">Submit</button> {/* Submit button */}
-        </form>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home isAuthenticated={isAuthenticated} onLogout={handleSignOut} />} />
+        <Route path="/signin" element={<SignIn onSignInSuccess={() => setIsAuthenticated(true)} />} />
+        <Route path="/signup" element={<SignUp setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
