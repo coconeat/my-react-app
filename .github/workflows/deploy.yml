@@ -18,30 +18,24 @@ jobs:
         with:
           node-version: '20'
 
-      # Ensure OpenSSL legacy provider is used for Node.js 20
       - name: Install dependencies and build project
         env:
           NODE_OPTIONS: --openssl-legacy-provider
-          COGNITO_REGION: ${{ secrets.COGNITO_REGION }}
-          COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
-          COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+          REACT_APP_REGION: ${{ secrets.COGNITO_REGION }}
+          REACT_APP_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
+          REACT_APP_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
         run: |
           npm install
           npm run build
 
-      # List build directory contents
       - name: List build directory contents
         run: ls -la build/
 
-      # Run the deployment script
       - name: Deploy to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          NODE_OPTIONS: --openssl-legacy-provider
-          COGNITO_REGION: ${{ secrets.COGNITO_REGION }}
-          COGNITO_USER_POOL_ID: ${{ secrets.COGNITO_USER_POOL_ID }}
-          COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
-        run: node deploy.js
+        run: |
+          aws s3 sync ./build s3://$AWS_S3_BUCKET --delete
